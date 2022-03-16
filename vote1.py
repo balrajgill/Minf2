@@ -36,6 +36,12 @@ pubkey, privkey = blindsignature.keygen(2 ** 512)
 votes = []
 
 
+ifile = open("keys/admin_pub","rb")
+pubkey = pickle.load(ifile)
+ifile.close()
+ifile = open("keys/admin_priv","rb")
+privkey = pickle.load(ifile)
+ifile.close()
 
 
 def getVotes():
@@ -65,21 +71,39 @@ votes = getVotes()
 commit,key = get_commit_Vote(votes[0])
 r,blind_commit=blindsignature.blind(commit,pubkey)
 signed_vote = SignVote(blind_commit)
-r = requests.post("http://127.0.0.1:5000", data=signed_vote)
-#Alice receives the blind message and signs ita
 
-#this should be done by admin signing the blinded message after checking voter is legit
-# signature of the ballot
+#admin_signed_vote = int((requests.post("http://127.0.0.1:5000/getAdminSignature", data=str(blind_commit))).text)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#test on this side
 sig = blindsignature.signature(blind_commit, privkey)
-#Bob recieves the signed message and unblinds it
-"""ubsig = blindsignature.unblind(sig,r,pubkey)
-#verifier verefies the message
+
+ubsig = blindsignature.unblind(sig,r,pubkey)
 verified = blindsignature.verify(ubsig,r,pubkey)
 msg2 = bytes.fromhex(hex(verified)[2:])
 
-print("msg is:" + " " + commit)
+print(f"msg is: {commit}")
+print(f"blind msg is: {str(blind_commit)[0:50]}")
+print(f"signature is: {str(sig)[0:50]}")
+print(f"unblinded signature is: {str(ubsig)[0:50]}")
+print(f"verified is: {str(verified)[0:50]}")
 print(f'b is: {msg2}')
-"""
 
 
 
