@@ -1,9 +1,8 @@
-
 from random import randrange, random
 from collections import namedtuple
 from math import log, gcd
 from binascii import hexlify, unhexlify
-
+import pickle
 def is_prime(n, k=30):
     if n <= 3:
         return n == 2 or n == 3
@@ -68,10 +67,10 @@ def keygen(N, public=None):
     return KeyPair(Key(public, composite), Key(private, composite))
 
 def signature(msg, privkey):
-    f=open('signedfile','w')
+
     coded = pow(int(msg), *privkey)% privkey[1]
-    print("Blinded Signed Message "+str(coded))
-    f.write(str(coded))
+    return coded
+
 
 def blindingfactor(N):
     b=random()*(N-1)
@@ -81,58 +80,68 @@ def blindingfactor(N):
     return r
 
 def blind(msg,pubkey):
-    f=open('blindmsg','w')
-    r=blindingfactor(pubkey[1])
-    m= int(msg.encode())
-
+    
+    r = blindingfactor(pubkey[1])
+    m = hexlify(msg.encode())
+    m = int(m,16)
     blindmsg=(pow(r,*pubkey)*m)% pubkey[1]
-    print ("Blinded Message "+str(blindmsg))
-    f.write(str(blindmsg))
-    return r
+ 
+
+    return (r,blindmsg)
 
 def unblind(msg,r,pubkey):
-	f=open('unblindsigned','w')
-	bsm=int(msg)
-	ubsm=(bsm*multinv(pubkey[1],r))% pubkey[1]
-	print ("Unblinded Signed Message "+str(ubsm))
-	f.write(str(ubsm))
 
-def verefy(msg,r,pubkey):
-    print ("Message After Verification "+str(pow(int(msg),*pubkey)%pubkey[1]))
+    bsm=int(msg)
+    ubsm=(bsm*multinv(pubkey[1],r))% pubkey[1]
+    
+    return ubsm
+	
+
+def verify(msg,r,pubkey):
+    #print ("Message After Verification")
+    #print(str(pow(int(msg),*pubkey)%pubkey[1]))
+    return pow(int(msg),*pubkey)%pubkey[1]
 
 if __name__ == '__main__':
     
-    # bob wants to send msg after blinding it
-    f=open('msg.txt')
-    pubkey, privkey = keygen(2 ** 128)
-    msg=f.read()
-    msg=msg.rstrip()
-    print ("Original Message "+str(msg))
-    r=blind(msg,pubkey)
+    #pubkey, privkey = keygen(2 ** 512)
+    
+    ifile = open("pub","rb")
+    pubkey = pickle.load(ifile)
+    ifile = open("priv","rb")
+    privkey = pickle.load(ifile)
+    
+    
+    """infile = open("keys/pub1",'wb')
+    pickle.dump(pubkey,infile)
+    outfile = open("keys/priv1","wb")
+    pickle.dump(privkey,outfile)
+    infile.close()
+    outfile.close()"""
+
+
+    
+    msg = "528dc343ef11011fb5a736aef44d70f7fc02b2452fce9cd0587a36cd1f8f8d2bfff"
+    r,blindmsg=blind(msg,pubkey)
 
     #Alice receives the blind message and signs it
-    bf=open('blindmsg')
-    m=bf.read()
-    signature(m, privkey)
+    
+    sig = signature(blindmsg, privkey)
 
     #Bob recieves the signed message and unblinds it
-    h=open('signedfile')
-    signedmsg=h.read()
-    unblind(signedmsg,r,pubkey)
+    ubsig = unblind(sig,r,pubkey)
     
     #verifier verefis the message
-    i=open('unblindsigned')
-    ubsignedmsg=i.read()
-    verefy(ubsignedmsg,r,pubkey)
-
-    '''print('-' * 20)
-    print(msg)
-    print(r)
-    print('-'*20)
-    a=5
-    b=a*pow(19,11) % 77
-    c=pow(b,11)%77
-    print c
-    d=(c*73) % 77
-    print d
-    print pow(d,11)%77 '''
+    
+    ver = verify(ubsig,r,pubkey)
+    m = hexlify(msg.encode())
+    m = int(m,16)
+    msg2 = bytes.fromhex(hex(ver)[2:])
+   
+    print("msg is:" + " " + msg)
+    print(f'm is: {m}')
+    print(f'blindmsg is: {blindmsg}')
+    print(f'sig is: {sig}')
+    print(f'ubsig is: {ubsig}')
+    print(f'ver is: {ver}')
+    print(f'b is: {msg2}')

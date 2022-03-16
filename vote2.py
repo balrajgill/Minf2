@@ -1,8 +1,7 @@
 import json
-from PySide6 import os
-from torch import sign
-import blindsignature
-import commitment
+import pickle
+import tools.blindsignature as blindsignature
+import tools.commitment as commitment
 from web3 import Web3
 from Crypto.PublicKey import RSA
 from Crypto.Hash import SHA256
@@ -19,9 +18,10 @@ from Crypto.Hash import SHA384
 
 ganache_url = "http://127.0.0.1:7545"
 web3 = Web3(Web3.HTTPProvider(ganache_url))
-web3.eth.default_account = web3.eth.accounts[0]
-address = "0x06F1eDf77f35B89722aBF3526f3441128B874F37"
-elibility_list = ["0x7AA44Ae701d54F1f400F13d9680B55EdafD51033","0x532d8c9030242249a05CFFC5c8fa4363273AC05d","0x5E81235FbEF5f2f0975859F794ceEf6B47825eCA"]
+web3.eth.default_account = web3.eth.accounts[2]
+
+address = "0x31C94C8ED6f9919F088C5a5F975D3Ffa5D25C053"
+
 
 abi = json.loads('[ { "inputs": [ { "internalType": "string", "name": "ballots", "type": "string" } ], "name": "addBallot", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "getVoteList", "outputs": [ { "internalType": "string[]", "name": "", "type": "string[]" } ], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "seeBallotList", "outputs": [ { "internalType": "string[]", "name": "", "type": "string[]" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "string", "name": "vote", "type": "string" } ], "name": "sendvote", "outputs": [], "stateMutability": "nonpayable", "type": "function" } ]')
 contract_instance = web3.eth.contract(address=address, abi=abi)
@@ -66,7 +66,6 @@ getVotes()
 SignVote()
 
 
-blindmsg = blindsignature.blind("testing", public_key)
 
 
 
