@@ -18,6 +18,8 @@ def hashing(value):
     return sha256(value.encode()).hexdigest()
 
 
+
+
 if __name__ == '__main__':
     commit,key = getCommitment("testing")
     hex_val = binascii.hexlify(commit.encode())

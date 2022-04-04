@@ -1,0 +1,51 @@
+#:kivy 2.0.0
+#:import Factory kivy.factory.Factory
+
+<CustomDropdown@DropDown>:
+    id: dropdown
+    on_select:
+        app.root.ids.btn.text = '{}'.format(args[1])
+        self.dismiss()
+
+    Button:
+        id: btn1
+        text: 'option 1'
+        size_hint_y: None
+        height: '48dp'
+        on_release:
+            dropdown.select(btn1.text)
+
+    Button:
+        id: btn2
+        text: 'option 2'
+        size_hint_y: None
+        height: '48dp'
+        on_release:
+            dropdown.select(btn2.text)
+
+<MyGridLayout>:
+    rows: 2
+    id: main_win
+
+    
+
+    BoxLayout:
+        orientation: "horizontal"
+        size: root.width, root.height
+        spacing: 20
+        padding: 30
+
+        Button:
+            id: btn
+            text: 'Press'
+            on_release: Factory.CustomDropdown().open(self)
+            size_hint: (0.7,0.2)
+
+
+        Button:
+            text: "Confirm Vote"
+            size_hint: (0.7,0.2)
+
+        Button:
+            text: "Extra shit"
+            size_hint: (0.7,0.2)

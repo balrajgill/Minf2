@@ -68,7 +68,19 @@ def keygen(N, public=None):
 
 def signature(msg, privkey):
 
-    coded = pow(int(msg), *privkey)% privkey[1]
+    coded = pow(int(msg), *privkey)% privkey[1]  #basically implement this in smart contract
+    print(privkey)
+    #coded1 = pow(int(msg), *privkey)
+    #coded2 = pow(int(msg), privkey[0], privkey[1])
+    print("-------")
+    #print(str(coded)[0:100])
+    #print(str(coded1)[0:100])
+    #print(str(coded2)[0:100])
+    
+    #print(coded==coded1)
+    #print(coded==coded2)
+    #print()
+    #print("-------")
     return coded
 
 
@@ -121,7 +133,7 @@ if __name__ == '__main__':
 
 
     
-    msg = "528dc343ef11011fb5a736aef44d70f7fc02b2452fce9cd0587a36cd1f8f8d2bfff"
+    msg = "testing"
     r,blindmsg=blind(msg,pubkey)
 
     #Alice receives the blind message and signs it
@@ -134,14 +146,12 @@ if __name__ == '__main__':
     #verifier verefis the message
     
     ver = verify(ubsig,r,pubkey)
-    m = hexlify(msg.encode())
-    m = int(m,16)
+
     msg2 = bytes.fromhex(hex(ver)[2:])
-   
-    print("msg is:" + " " + msg)
-    print(f'm is: {m}')
+    m = int(hexlify(msg.encode()),16)
+    print(f'msg is : {m}')
     print(f'blindmsg is: {blindmsg}')
     print(f'sig is: {sig}')
     print(f'ubsig is: {ubsig}')
     print(f'ver is: {ver}')
-    print(f'b is: {msg2}')
+    

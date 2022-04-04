@@ -11,13 +11,23 @@ from tools import blindsignature
 app = Flask(__name__)
 
 #pubkey, privkey = blindsignature.keygen(2 ** 512)
+
+
+"""infile = open("keys/admin_priv",'wb')
+pickle.dump(pubkey,infile)
+outfile = open("keys/admin_priv","wb")
+pickle.dump(privkey,outfile)
+infile.close()
+outfile.close()
+"""
 ifile = open("keys/admin_pub","rb")
 pubkey = pickle.load(ifile)
 ifile.close()
 ifile = open("keys/admin_priv","rb")
 privkey = pickle.load(ifile)
 ifile.close()
-print(pubkey)
+#print(pubkey)
+
 @app.route('/')
 
 def hello_world():
@@ -29,9 +39,9 @@ def hello_world():
 def adminSignature():
     print("triggered")
     blind_commit = int(request.data)
-    print(blind_commit)
+    #print(blind_commit)
     blind_commit_signed = blindsignature.signature(blind_commit, privkey)
-    print(blind_commit_signed)
+    #print(blind_commit_signed)
     return str(blind_commit_signed)
   
 
