@@ -95,12 +95,8 @@ def unblind(msg,pubkey,k,r,h,blindmsg):
 	
 	print ("Signed Blinded Message "+ str(msg))
 	sdash=msg
-	#ks=(multinv(privkey[1]-1,h)*(privkey[0]*r+k*sdash)-privkey[0]*r)% (privkey[1]-1)
-	#s=multinv(privkey[1]-1,k)*ks%(privkey[1]-1)
 	s=((multinv(pubkey[2]-1,h)-1)*blindmsg*multinv(pubkey[2]-1,k)+sdash)% (pubkey[2]-1)
-    #s=(privkey[0]*r*multinv(privkey[1],k)*(multinv(privkey[1],h)-1)+(multinv(privkey[1],h)*sdash))%(privkey[1]-1)
-	#print (privkey[0]*r+k*s) % (privkey[1]-1)
-	
+  
 	return s
 
 def verefy(msg,signedmsg,pubkey,r):
@@ -108,21 +104,21 @@ def verefy(msg,signedmsg,pubkey,r):
     s= signedmsg
     a=pow(pubkey[1],m,pubkey[2])
     b=(pow(pubkey[0],r,pubkey[2])*pow(r,s,pubkey[2]))%pubkey[2]
-    #c = str(pow(pubkey[1],m))
-    #print(f'c is :{c[0:1000]}')
     print(f'msg a is : {a}')
     print(f'msg b is : {b}')
-if __name__ == '__main__':
+
+
+"""if __name__ == '__main__':
 	
     
     #privkey, pubkey = keygen(2**128)
 
-    """infile = open("keys/elgampub",'wb')
+    infile = open("keys/elgampub",'wb')
     pickle.dump(pubkey,infile)
     outfile = open("keys/elgampriv","wb")
     pickle.dump(privkey,outfile)
     infile.close()
-    outfile.close()"""
+    outfile.close()
 
 
 
@@ -131,9 +127,11 @@ if __name__ == '__main__':
     pubkey = pickle.load(ifile)
     ifile = open("keys/elgampriv","rb")
     privkey = pickle.load(ifile)
-    msg = "8a7e9481cd3a2431eb6efc93695498ad89a4acde0a5aacd2a70e53ca86d0ca32"
+    msg = "8a7e9481cd3a2431eb6efc93695498ad"
+    msg2 = "89a4acde0a5aacd2a70e53ca86d0ca32"
     m = hexlify(msg.encode())
     m = int(m,16)
+
     print(f'm is: {m}')
 
     print(pubkey[1])
@@ -149,3 +147,4 @@ if __name__ == '__main__':
     ubsig = unblind(sig,pubkey,k,r,h,blindmsg)
     print(f'ubsig is : {ubsig}')
     verefy(m,ubsig,pubkey,r)
+"""

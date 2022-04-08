@@ -9,19 +9,16 @@ import vote1
 
 
 class MainClass(App):
-    
-    dropdown = DropDown()
-    votes = vote1.getVotes()
-    for index in range(len(votes)):
-      
-        btn = Button(text= f'{index+1}. {votes[index]}', size_hint_y=None, height=44)
-        btn.bind(on_release=lambda btn: dropdown.select(btn.text))
- 
-
-
-        # then add the button inside the dropdown
-        dropdown.add_widget(btn)
-        
+    def build(self):
+        dropdown = DropDown()
+        votes = vote1.getVotes()
+        for index in range(len(votes)):
+       
+            btn = Button(text= f'{index+1}. {votes[index]}', size_hint_y=None, height=44)
+            btn.bind(on_release=lambda btn: dropdown.select(btn.text))
+            dropdown.add_widget(btn)
+            
+        return dropdown
         # create a big main button
     mainbutton = Button(text='Select Vote', size_hint=(None, None))
 

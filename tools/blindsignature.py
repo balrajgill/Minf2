@@ -85,6 +85,7 @@ def signature(msg, privkey):
 
 
 def blindingfactor(N):
+    print("this is N ================================================")
     b=random()*(N-1)
     r=int(b)
     while (gcd(r,N)!=1):
