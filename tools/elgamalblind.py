@@ -36,8 +36,8 @@ def is_prime(n):
                 return False
         return True  
  
-    for i in range(8):#number of trials 
-        a = random.randrange(2, n)
+    for i in range(100):
+        a = randrange(2, n)
         if trial_composite(a):
             return False
  
@@ -82,10 +82,9 @@ def multinv(modulus, value):
 def blind(msg,pubkey):
     m = hexlify(msg.encode())
     m = int(m,16)
-    #print(f'msg asdfsdf is : {m}')
     k=findrandom(pubkey[2])
     r=pow(pubkey[1],k,pubkey[2])
-    #h is blinding factor
+
     h=findrandom(pubkey[2])
     print ("Real Message: " + msg)
   
@@ -131,7 +130,7 @@ def verefy(msg,signedmsg,pubkey,r):
 if __name__ == '__main__':
 	
     
-    #privkey, pubkey = keygen(2**128)
+    privkey, pubkey = keygen(2**128)
 
     """infile = open("keys/elgampub",'wb')
     pickle.dump(pubkey,infile)

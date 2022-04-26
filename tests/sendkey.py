@@ -26,7 +26,7 @@ import pandas as pd
 ganache_url = "http://127.0.0.1:7545"
 web3 = Web3(Web3.HTTPProvider(ganache_url))
 web3.eth.default_account = web3.eth.accounts[1]
-address = "0x7cF39BBec012dEaB7366ab7a0fbfcbfC42b3B33A"
+address = "0x411B44e2d5FB3Bf3E74b78c7889d1644F003Fd21"
 abi = json.loads('[ { "inputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "name": "Admin_yi", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "name": "Voter_xi", "outputs": [ { "internalType": "bytes32", "name": "", "type": "bytes32" } ], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "a", "outputs": [ { "internalType": "bytes32", "name": "", "type": "bytes32" } ], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "b", "outputs": [ { "internalType": "bytes16", "name": "", "type": "bytes16" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "name": "counts", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "emptyAll", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "uint256", "name": "_b", "type": "uint256" }, { "internalType": "uint256", "name": "_e", "type": "uint256" }, { "internalType": "uint256", "name": "_m", "type": "uint256" } ], "name": "modExp", "outputs": [ { "internalType": "uint256", "name": "result", "type": "uint256" } ], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "seeBallotList", "outputs": [ { "internalType": "string[]", "name": "", "type": "string[]" } ], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "string", "name": "key", "type": "string" }, { "internalType": "string", "name": "vote", "type": "string" }, { "internalType": "uint256", "name": "i", "type": "uint256" } ], "name": "sendKey", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "bytes32", "name": "xi", "type": "bytes32" }, { "internalType": "uint256", "name": "m", "type": "uint256" }, { "internalType": "uint256", "name": "ubsig", "type": "uint256" }, { "internalType": "uint256", "name": "r", "type": "uint256" } ], "name": "sendvote", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "", "type": "address" } ], "name": "voter_blind_verified", "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "", "type": "address" } ], "name": "voter_vote_verified", "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ], "stateMutability": "view", "type": "function" } ]')
 contract_instance = web3.eth.contract(address=address, abi=abi)
 
@@ -36,6 +36,7 @@ m = "2"
 
 costs = []
 times = []
+
 
 #e = contract_instance.functions.sendKey(key,m,1).estimateGas()
 #print(e)
@@ -55,10 +56,10 @@ for i in range(100):
     ub = getrandbits(128)
     r = getrandbits(128)
 
-    e2 = contract_instance.functions.sendvote(bytes(com,"utf-8"),msg,ub,r).estimateGas()
+    e2 = contract_instance.functions.sendKey(com,"1",1).estimateGas()
     stop = timeit.default_timer()
     times.append(stop-start)
-    costs.append(e2)
+    costs.append(e2*1.5)
 
 costs = numpy.asarray_chkfinite(costs)
 times = numpy.asarray_chkfinite(times)
@@ -73,3 +74,14 @@ print(df)
 
 print(numpy.sum(costs))
 print(numpy.sum(times))
+
+import numpy as np 
+from matplotlib import pyplot as plt 
+
+x = np.arange(1,101) 
+y = numpy.cumsum(costs)
+plt.title("Number of Voters vs Gas") 
+plt.xlabel("Number Voters") 
+plt.ylabel("Gas Cost in (x10^6)") 
+plt.plot(x,y) 
+plt.show()

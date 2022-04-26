@@ -13,11 +13,11 @@ def getCommitment(msg):
         #print(key) 
         com = Web3.soliditySha3(['string'], [key+msg])
         
-        return ((com.hex()[2:])[:32],key)
+        return ((com.hex()[2:]),key)
     
 def verify(msg,commitment,key): 
     
-    return commitment == (((Web3.solidityKeccak(['string'], [key+msg])).hex())[2:])[:32]
+    return commitment == (((Web3.solidityKeccak(['string'], [key+msg])).hex())[2:])
 
 com,key = getCommitment("1")
 print(verify("1",com,key))
