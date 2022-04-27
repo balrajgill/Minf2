@@ -13,7 +13,7 @@ def getCommitment(msg):
         #print(key) 
         com = Web3.soliditySha3(['string'], [key+msg])
         
-        return ((com.hex()[2:]),key)
+        return ((com.hex()[2:][:32]),key)
     
 def verify(msg,commitment,key): 
     

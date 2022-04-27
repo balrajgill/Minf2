@@ -46,8 +46,8 @@ xi = "0x2613e27EFaC527723a2717c4Df38aB96F6Ec0313"
 for i in range(100):
     start = timeit.default_timer()
     key = "{0:0{1}x}".format(getrandbits(256), 64)
-            #print(key) 
-    #web3.eth.default_account = web3.eth.accounts[i]
+    print(key) 
+    web3.eth.default_account = web3.eth.accounts[i]
 
     com = Web3.soliditySha3(['string'], [key+"1"])
     com = (com.hex()[2:])[:32]

@@ -26,20 +26,23 @@ from binascii import hexlify, unhexlify
 import ecdsa
 import hashlib, secrets
 import eth_abi
+import re
 
 url = "http://127.0.0.1:5000/getAdminSignature"
 
+
+abi_text = ""
+with open("tools/abi.txt","r") as abi_text_file:
+    abi_text = re.sub(r"[\n\t\s]*", "", (abi_text_file.read()))
+
+print(abi_text)
 ganache_url = "http://127.0.0.1:7545"
 web3 = Web3(Web3.HTTPProvider(ganache_url))
 web3.eth.default_account = web3.eth.accounts[0]
-address = "0x911EEFA15bD58d016c9F87b2E84753D0AA29EF52"
-abi = json.loads('[ { "inputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "name": "Admin_yi", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "GetCurrentTime", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "string", "name": "key", "type": "string" }, { "internalType": "string", "name": "vote", "type": "string" }, { "internalType": "uint256", "name": "l", "type": "uint256" } ], "name": "ValidCommitment", "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "name": "Voter_xi", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "name": "Voter_xi_bytes", "outputs": [ { "internalType": "bytes32", "name": "", "type": "bytes32" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "string", "name": "ballots", "type": "string" } ], "name": "addBallot", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "name": "ballotList", "outputs": [ { "internalType": "string", "name": "", "type": "string" } ], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "countVotes", "outputs": [ { "internalType": "string", "name": "", "type": "string" } ], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "string", "name": "", "type": "string" } ], "name": "counts", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "emptyAll", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "gas", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "uint256", "name": "_b", "type": "uint256" }, { "internalType": "uint256", "name": "_e", "type": "uint256" }, { "internalType": "uint256", "name": "_m", "type": "uint256" } ], "name": "modExp", "outputs": [ { "internalType": "uint256", "name": "result", "type": "uint256" } ], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "name": "ri", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "seeBallotList", "outputs": [ { "internalType": "string[]", "name": "", "type": "string[]" } ], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "bytes32", "name": "", "type": "bytes32" } ], "name": "sendKey", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "bytes32", "name": "bm", "type": "bytes32" }, { "internalType": "uint256", "name": "m", "type": "uint256" }, { "internalType": "uint256", "name": "ubsig", "type": "uint256" }, { "internalType": "uint256", "name": "r", "type": "uint256" } ], "name": "sendvote", "outputs": [], "stateMutability": "nonpayable", "type": "function" } ]')
+address = "0xA8F607484292fF880482BEc719c0A095aF87E754"
+abi = json.loads(abi_text)
 contract_instance = web3.eth.contract(address=address, abi=abi)
 votes = contract_instance.functions.seeBallotList().call()
-
-for account in web3.eth.accounts:
-    print(account)
-
 
 
 
@@ -62,9 +65,7 @@ test_floatie = FloatLayout()
 
 vk = sk.get_verifying_key()
 sig = sk.sign(b"message")
-print(b64encode(sig))
 a = vk.verify(sig, b"message") # True
-print(a)
 
 infile = open("keys/sk",'wb')
 pickle.dump(sk,infile)
@@ -79,7 +80,7 @@ outfile.close()
 def select(drop_button, text, btn):
     drop_button.text = text
     currentSelectedVote = text
-    f = open("tools/currentvote.txt", "w")
+    f = open("tools/currentvote1.txt", "w")
     f.write(text)
     f.close()
 
@@ -88,18 +89,40 @@ def output(inputbox,text):
     inputbox.text = "\n" + text
 
 
+def display():
+    display = "here here here here here here here here"
+
+def sendKey(a,b):
+
+    f = open("voterdata/currentvote1.txt", "r")
+    v = f.read()
+    f.close()
+    f = open("voterdata/key1.txt", "r")
+    k = f.read()
+    f.close()
+    print("key from sdfyasduhfj is:" + str(k))
+    contract_instance.functions.sendKey(k,v,1).transact()
+    b.disabled = True
+
 
 def chooseVote(drop_button,dropbutton2,inputbox, text, btn):
-    f = open("tools/currentvote.txt", "r")
+    f = open("voterdata/currentvote1.txt", "r")
     a = f.read()
     f.close()
     vote = a.split(".")[0]
     
-
     
     commit,key = commitment.getCommitment(vote)
+
+    f = open("voterdata/key1.txt", "w")
+    f.write(key)
+    f.close()
+
+
+
+
     m = int(hexlify(commit.encode()),16)
-    print(m)
+    print("m is :" + str(m))
     k,r,h,blind_commit = elgamalblind.blind(commit,pubkey)
     data_to_send = str(blind_commit) + "-" + str(k) + "-" + str(r)
     signed_blind = int((requests.post("http://127.0.0.1:5000/getAdminSignature", data=data_to_send)).text)
@@ -110,14 +133,9 @@ def chooseVote(drop_button,dropbutton2,inputbox, text, btn):
     ecommit = commit.encode("utf-8")
     print(ecommit)
     elgamalblind.verefy(m,y,pubkey,r)
-    contract_instance.functions.sendvote(commit.encode(),m,y,r).transact()
-    aa = contract_instance.functions.ValidCommitment(key,vote,0).call()
-    print("========================================================================" + str(aa))
+    contract_instance.functions.sendvote(m,y,r).transact()
+
     print(f"r is : {r}")
-    #k,r,h,blindmsg=blind(msg,pubkey)
-    #ubsig = unblind(sig,pubkey,k,r,h,blindmsg)
-    #print(f'ubsig is : {ubsig}')
-    #verefy(m,ubsig,pubkey,r)
     output(inputbox,commit)
     output(inputbox,str(blind_commit))
 
@@ -157,6 +175,8 @@ textinput.pos_hint = {"x":0.1,"top":0.8}
 test_floatie.add_widget(textinput)
 
 dropButton1.bind(on_release=partial(chooseVote, dropButton,dropButton1,textinput, ""))
+dropButton2.bind(on_release=partial(sendKey,dropButton2))
+
 test_floatie.add_widget(dropButton1)
 test_floatie.add_widget(dropButton2)
 test_floatie.add_widget(dropButton3)
